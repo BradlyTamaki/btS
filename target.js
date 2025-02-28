@@ -136,7 +136,7 @@ const TRACKED_SKU = {
   POKEMON: {
     product: "DEFAULT POKEMON INFO",
     minPurchase: Number.MAX_SAFE_INTEGER,
-    lvl: 0,
+    lvl: 2,
   },
 };
 
