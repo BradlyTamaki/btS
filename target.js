@@ -1,3 +1,16 @@
+// ==UserScript==
+// @name         Target btS
+// @namespace    http://tampermonkey.net/
+// @version      git
+// @description  try to take over the world!
+// @author       You
+// @match        *://*/*
+// @require      https://bradlytamaki.github.io/btS/target.js
+// @icon         https://archives.bulbagarden.net/media/upload/3/32/Pok%C3%A9mon_Center_stores_logo.png
+// @grant        none
+// ==/UserScript==
+
+
 // lvl 0: Do nothing
 // lvl 1: Add to cart
 // lvl 2: Max Qty + Add to cart
@@ -6,7 +19,8 @@
 const max = 4;
 
 const goToCheckoutDelay = 300;
-const testing_delay_between_action = 333;
+// const testing_delay_between_action = 333;
+const testing_delay_between_action = localStorage.getItem('testing_delay_between_action');
 const somethingWrongWithAddToCart = true;
 const EXECUTE_BUY = true;
 
