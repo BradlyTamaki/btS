@@ -1,14 +1,3 @@
-// ==UserScript==
-// @name         Target Scaper
-// @namespace    http://tampermonkey.net/
-// @version      1.2.3
-// @description  try to take over the world!
-// @author       You
-// @match        https://tampermonkey.net/scripts.php
-// @icon         https://archives.bulbagarden.net/media/upload/3/32/Pok%C3%A9mon_Center_stores_logo.png
-// @grant        none
-// ==/UserScript==
-
 // lvl 0: Do nothing
 // lvl 1: Add to cart
 // lvl 2: Max Qty + Add to cart
@@ -171,15 +160,15 @@ docReady(async function () {
     const productPrice = await doUntil(get_productPrice);
     let qty = 1;
 
-    const PRODUCT_INFO =
-      TRACKED_SKU[sku] ??
-      (productTitleIsPokemon ? TRACKED_SKU.POKEMON : TRACKED_SKU.DEFAULT);
+    log(TRACKED_SKU);
+    log('TRACKED_SKU', TRACKED_SKU);
+    log('sku', sku);
+    log('productTitleIsPokemon', productTitleIsPokemon);
+    const PRODUCT_INFO = TRACKED_SKU[sku] ?? (productTitleIsPokemon ? TRACKED_SKU.POKEMON : TRACKED_SKU.DEFAULT);
     log("PRODUCT_INFO", PRODUCT_INFO);
 
     if (productPrice > PRODUCT_INFO.minPurchase)
-      return logWarn(
-        `Price detected is too high. Price is ${productPrice} and we are looking for ${PRODUCT_INFO?.minPurchase} or under.`
-      );
+      return logWarn(`Price detected is too high. Price is ${productPrice} and we are looking for ${PRODUCT_INFO?.minPurchase} or under.`);
 
     if (PRODUCT_INFO.lvl === 0) return;
 
@@ -212,9 +201,7 @@ docReady(async function () {
     const modalHeaderText = await doUntil(get_modalHeaderTextContent);
 
     if (modalHeaderText.toLowerCase() != "added to cart") {
-      return logError(
-        `Failed to add cart? Modal header text = [${modalHeaderText}]`
-      );
+      return logError(`Failed to add cart? Modal header text = [${modalHeaderText}]`);
     }
 
     // Redirect to cart or checkout
@@ -241,10 +228,7 @@ docReady(async function () {
     );
 
     if (expectedSubtotal < actualSubTotal) {
-      logWarn(
-        `Calculation to the cart was different than expected. We might have unwanted items in the cart. expected ${expectedSubtotal} but actual was ${actualSubTotal}`
-      );
-      return;
+      return logWarn(`Calculation to the cart was different than expected. We might have unwanted items in the cart. expected ${expectedSubtotal} but actual was ${actualSubTotal}`);
     }
 
     // prompted to confirm address
@@ -327,9 +311,7 @@ function doClickAfterEventListener(element, count = 0) {
   }
 
   if (count > 60) {
-    logWarn(
-      "doClickAfterEventListener looped more than 60 times. Did not detect event listener"
-    );
+    logWarn("doClickAfterEventListener looped more than 60 times. Did not detect event listener");
     return null;
   }
 
@@ -363,10 +345,7 @@ function setNativeValueAndDispatchEvent(element, value) {
 
   const valueSetter = Object.getOwnPropertyDescriptor(element, "value").set;
   const prototype = Object.getPrototypeOf(element);
-  const prototypeValueSetter = Object.getOwnPropertyDescriptor(
-    prototype,
-    "value"
-  ).set;
+  const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, "value").set;
 
   if (valueSetter && valueSetter !== prototypeValueSetter) {
     prototypeValueSetter.call(element, value);
@@ -464,6 +443,7 @@ function get_productPrice() {
 function get_productSKU() {
   const pathname = location.pathname.toLowerCase();
   const pathnameArray = pathname.split("/");
+
   return pathnameArray[pathnameArray.length - 1];
 }
 
