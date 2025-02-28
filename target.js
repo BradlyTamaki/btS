@@ -11,6 +11,10 @@
 // ==/UserScript==
 
 
+// exit case
+const isTargetRoute = location.host == "www.target.com";
+if (!isTargetRoute) return;
+
 // lvl 0: Do nothing
 // lvl 1: Add to cart
 // lvl 2: Max Qty + Add to cart
@@ -20,7 +24,7 @@ const max = 4;
 
 const goToCheckoutDelay = localStorage.getItem('bts_goToCheckoutDelay') ?? 300;
 const testing_delay_between_action = localStorage.getItem('bts_testing_delay_between_action') ?? 200;
-const somethingWrongWithAddToCart = localStorage.getItem('bts_somethingWrongWithAddToCart') ?? false;
+const somethingWrongWithAddToCart = localStorage.getItem('bts_somethingWrongWithAddToCart') ?? true;
 const EXECUTE_BUY = localStorage.getItem('bts_EXECUTE_BUY') ?? true;
 
 const SKU_151 = {
@@ -157,7 +161,7 @@ docReady(async function () {
   const isTargetRoute = location.host == "www.target.com";
   if (!isTargetRoute) return;
 
-
+  // Verify required localStorage values
   const isMissingKeys = verifyLocalStoragePopulated();
   if (isMissingKeys) return;
 
@@ -200,7 +204,7 @@ docReady(async function () {
 
     // store qty count for calculating safe checkout value
     sessionStorage.setItem("bts", JSON.stringify({ qty, productPrice }));
-    if(somethingWrongWithAddToCart) return;
+    if (somethingWrongWithAddToCart) return;
 
     await sleep(testing_delay_between_action);
     // clicks add to cart
