@@ -6,7 +6,7 @@
 const max = 4;
 
 const goToCheckoutDelay = 300;
-const testing_delay_between_action = 100;
+const testing_delay_between_action = 333;
 const somethingWrongWithAddToCart = true;
 const EXECUTE_BUY = true;
 
@@ -160,10 +160,6 @@ docReady(async function () {
     const productPrice = await doUntil(get_productPrice);
     let qty = 1;
 
-    log(TRACKED_SKU);
-    log('TRACKED_SKU', TRACKED_SKU);
-    log('sku', sku);
-    log('productTitleIsPokemon', productTitleIsPokemon);
     const PRODUCT_INFO = TRACKED_SKU[sku] ?? (productTitleIsPokemon ? TRACKED_SKU.POKEMON : TRACKED_SKU.DEFAULT);
     log("PRODUCT_INFO", PRODUCT_INFO);
 
@@ -173,7 +169,6 @@ docReady(async function () {
     if (PRODUCT_INFO.lvl === 0) return;
 
     // qty control has to be loaded in before adding to cart
-    await sleep(testing_delay_between_action);
     const qtyButton = await doUntil(get_qtyButton);
 
     if (PRODUCT_INFO.lvl >= 2 && !PRODUCT_INFO.skipQty) {
