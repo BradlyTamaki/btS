@@ -11,11 +11,12 @@
 // ==/UserScript==
 
 
-// lvl 0: Do nothing
-// lvl 1: Add to cart
-// lvl 2: Max Qty + Add to cart
-// lvl 3: Max Qty + Add to cart + Checkout page
-// lvl 4: Max Qty + Add to cart + Place Order
+// lvl 0:     Do nothing
+// lvl 0+bts: Max Qty
+// lvl 1:     Add to cart
+// lvl 2:     Max Qty + Add to cart
+// lvl 3:     Max Qty + Add to cart + Checkout page
+// lvl 4:     Max Qty + Add to cart + Place Order
 const max = 4;
 
 const goToCheckoutDelay = 500;
@@ -138,7 +139,7 @@ const TRACKED_SKU = {
   POKEMON: {
     product: "DEFAULT POKEMON INFO",
     minPurchase: Number.MAX_SAFE_INTEGER,
-    lvl: 2,
+    lvl: 0,
   },
 };
 
@@ -167,6 +168,7 @@ docReady(async function () {
       get_productTitle().toLowerCase()?.indexOf("pokémon") >= 0;
     const productPrice = await doUntil(get_productPrice);
     let qty = 1;
+    const isBtsTriggered = getUrlParams().bts === 'true'
 
     const PRODUCT_INFO = TRACKED_SKU[sku] ?? (productTitleIsPokemon ? TRACKED_SKU.POKEMON : TRACKED_SKU.DEFAULT);
     log("PRODUCT_INFO", PRODUCT_INFO);
@@ -174,12 +176,13 @@ docReady(async function () {
     if (productPrice > PRODUCT_INFO.minPurchase)
       return logWarn(`Price detected is too high. Price is ${productPrice} and we are looking for ${PRODUCT_INFO?.minPurchase} or under.`);
 
-    if (PRODUCT_INFO.lvl === 0) return;
+    // Exit if lvl=0+!bts
+    if (PRODUCT_INFO.lvl === 0 && !isBtsTriggered) return;
 
     // qty control has to be loaded in before adding to cart
     const qtyButton = await doUntil(get_qtyButton);
 
-    if (PRODUCT_INFO.lvl >= 2 && !PRODUCT_INFO.skipQty) {
+    if ((PRODUCT_INFO.lvl >= 2 || isBtsTriggered) && !PRODUCT_INFO.skipQty) {
       // clicks qty dropdown
       doClickAfterEventListener(qtyButton);
 
@@ -193,8 +196,13 @@ docReady(async function () {
       qty = get_qtyCount(maxQtyButton);
     }
 
+    // exit is lvl=0
+    if (PRODUCT_INFO.lvl === 0) return;
+
     // store qty count for calculating safe checkout value
     sessionStorage.setItem("bts", JSON.stringify({ qty, productPrice }));
+
+    // Flag to exit if something with wrong with ATC
     if (somethingWrongWithAddToCart) return;
 
     await sleep(testing_delay_between_action);
@@ -232,7 +240,8 @@ docReady(async function () {
     );
 
     if (expectedSubtotal < actualSubTotal) {
-      return logWarn(`Calculation to the cart was different than expected. We might have unwanted items in the cart. expected ${expectedSubtotal} but actual was ${actualSubTotal}`);
+      const styleOverrides = { fontSize: '40px' }
+      return createAlertBox(`Calculation to the cart was different than expected. We might have unwanted items in the cart. expected ${expectedSubtotal} but actual was ${actualSubTotal}`, styleOverrides);
     }
 
     // prompted to confirm address
@@ -376,12 +385,16 @@ function verifyLocalStoragePopulated() {
   }
 }
 
-function createAlertBox(a) { console.log(a) }
+function getUrlParams() {
+  return new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+  });
+}
 
 // ====================================================
 // UI
 // ====================================================
-function createAlertBox(str = "btS Could not execute") {
+function createAlertBox(str = "btS Could not execute", styleOverrides = {}) {
   const alertBox = document.createElement("div");
   alertBox.style.display = "flex";
   alertBox.style.justifyContent = "center";
@@ -393,12 +406,15 @@ function createAlertBox(str = "btS Could not execute") {
   alertBox.style.top = "65px";
   alertBox.style.left = "100px";
   alertBox.style.right = "100px";
+  alertBox.style.padding = "10px";
   alertBox.style.background = "red";
   alertBox.style.zIndex = "9999";
   alertBox.addEventListener("click", (e) => {
     e.target.remove();
   });
   alertBox.textContent = str;
+
+  Object.keys(styleOverrides).forEach((key) => alertBox.style[key] = styleOverrides[key]);
 
   document.querySelector("body").appendChild(alertBox);
 }
