@@ -18,11 +18,10 @@
 // lvl 4: Max Qty + Add to cart + Place Order
 const max = 4;
 
-const goToCheckoutDelay = 300;
-// const testing_delay_between_action = 333;
-const testing_delay_between_action = localStorage.getItem('testing_delay_between_action');
-const somethingWrongWithAddToCart = true;
-const EXECUTE_BUY = true;
+const goToCheckoutDelay = localStorage.getItem('bts_goToCheckoutDelay') ?? 300;
+const testing_delay_between_action = localStorage.getItem('bts_testing_delay_between_action') ?? 200;
+const somethingWrongWithAddToCart = localStorage.getItem('bts_somethingWrongWithAddToCart') ?? false;
+const EXECUTE_BUY = localStorage.getItem('bts_EXECUTE_BUY') ?? true;
 
 const SKU_151 = {
   "a-88897904": {
@@ -201,6 +200,7 @@ docReady(async function () {
 
     // store qty count for calculating safe checkout value
     sessionStorage.setItem("bts", JSON.stringify({ qty, productPrice }));
+    if(somethingWrongWithAddToCart) return;
 
     await sleep(testing_delay_between_action);
     // clicks add to cart
