@@ -18,8 +18,8 @@
 // lvl 4: Max Qty + Add to cart + Place Order
 const max = 4;
 
-const goToCheckoutDelay = 300;
-const testing_delay_between_action = 200;
+const goToCheckoutDelay = 500;
+const testing_delay_between_action = 350;
 const somethingWrongWithAddToCart = false;
 const EXECUTE_BUY = true;
 
