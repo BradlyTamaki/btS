@@ -11,10 +11,6 @@
 // ==/UserScript==
 
 
-// exit case
-const isTargetRoute = location.host == "www.target.com";
-if (!isTargetRoute) return;
-
 // lvl 0: Do nothing
 // lvl 1: Add to cart
 // lvl 2: Max Qty + Add to cart
@@ -22,10 +18,10 @@ if (!isTargetRoute) return;
 // lvl 4: Max Qty + Add to cart + Place Order
 const max = 4;
 
-const goToCheckoutDelay = localStorage.getItem('bts_goToCheckoutDelay') ?? 300;
-const testing_delay_between_action = localStorage.getItem('bts_testing_delay_between_action') ?? 200;
-const somethingWrongWithAddToCart = localStorage.getItem('bts_somethingWrongWithAddToCart') ?? true;
-const EXECUTE_BUY = localStorage.getItem('bts_EXECUTE_BUY') ?? true;
+const goToCheckoutDelay = 300;
+const testing_delay_between_action = 200;
+const somethingWrongWithAddToCart = false;
+const EXECUTE_BUY = true;
 
 const SKU_151 = {
   "a-88897904": {
@@ -144,11 +140,6 @@ const TRACKED_SKU = {
     minPurchase: Number.MAX_SAFE_INTEGER,
     lvl: 2,
   },
-};
-
-const bts_cred = {
-  un: localStorage.getItem("bts_cred_un"),
-  pw: localStorage.getItem("bts_cred_pw"),
 };
 
 // ====================================================
