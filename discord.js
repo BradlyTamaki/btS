@@ -4,11 +4,10 @@
 // @version      1.0.0
 // @description  try to take over the world!
 // @author       You
-// @match        *://*/*
+// @match        https://discord.com/channels/1296182793407168614/*
 // @icon         https://discord.com/assets/favicon.ico
 // @grant        none
 // ==/UserScript==
-// https://discord.com/channels/1296182793407168614/*
 
 const P0 = 'P0', P1 = 'P1', P2 = 'P2', P3 = 'P3';
 const tickRate = 3000;
