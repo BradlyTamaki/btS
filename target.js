@@ -225,7 +225,7 @@ docReady(async function () {
     }
   }
 
-  if (get_pageType() === 'CART') {
+  if (get_pageType() === 'CART' && !get_cartIsEmpty()) {
     return location.href = '/checkout';
   }
 
@@ -499,6 +499,13 @@ function get_addToCartOrPreorderButton() {
 
 function get_modalHeaderTextContent() {
   return document.querySelector('[data-test="modal-drawer-heading"]')?.textContent;
+}
+
+// ====================================================
+// cart page fn
+// ====================================================
+function get_cartIsEmpty() {
+  return document.querySelector('[data-test="boxEmptyMsg"]')?.textContent === 'Your cart is empty'
 }
 
 // ====================================================
