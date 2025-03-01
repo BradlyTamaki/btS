@@ -225,8 +225,11 @@ docReady(async function () {
     }
   }
 
-  if (get_pageType() === 'CART' && !get_cartIsEmpty()) {
-    return location.href = '/checkout';
+  if (get_pageType() === 'CART') {
+    // Loop for 2seconds for cart to load and redirect if items are found
+    const hasCartItems = await doUntil(() => get_cartItems().length !== 0, 40);
+
+    if(hasCartItems) return location.href = '/checkout';
   }
 
   if (get_pageType() === "CHECKOUT") {
@@ -506,6 +509,10 @@ function get_modalHeaderTextContent() {
 // ====================================================
 function get_cartIsEmpty() {
   return document.querySelector('[data-test="boxEmptyMsg"]')?.textContent === 'Your cart is empty'
+}
+
+function get_cartItems() {
+  return document.querySelectorAll('[data-test="cartItem"]');
 }
 
 // ====================================================
