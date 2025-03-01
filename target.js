@@ -102,17 +102,17 @@ const SKU_PRISMATIC_EVOLUTIONS = {
   },
 };
 const SKU_JOURNEY_TOGETHER = {
-  "a-93859728": {
-    product: "Journey Together Scrafty 3Pack",
-    minPurchase: 20,
-    lvl: max,
-    skipQty: true,
-  },
-  "a-94300074": {
-    product: "Journey Together Booster Bundle",
-    minPurchase: 30,
-    lvl: max,
-  },
+  // "a-93859728": {
+  //   product: "Journey Together Scrafty 3Pack",
+  //   minPurchase: 20,
+  //   lvl: max,
+  //   skipQty: true,
+  // },
+  // "a-94300074": {
+  //   product: "Journey Together Booster Bundle",
+  //   minPurchase: 30,
+  //   lvl: max,
+  // },
 };
 const TRACKED_SKU = {
   ...SKU_151,

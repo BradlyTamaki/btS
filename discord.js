@@ -175,7 +175,7 @@ function getFromMessage_username(element) {
 function getFromMessage_title(element) {
   const classNameId = findMessageClassId(element);
 
-  return element?.querySelector?.(`.embedTitle__${classNameId}`).textContent
+  return element?.querySelector?.(`.embedTitle__${classNameId}`)?.textContent
 }
 
 function getFromMessage_sku(element) {
@@ -328,8 +328,8 @@ function uiChannelBlocker(intervald) {
   channelBlocker.style.display = 'flex';
   channelBlocker.style.justifyContent = 'center';
   channelBlocker.style.alignItems = 'center';
+  channelBlocker.style.flexDirection = 'column';
   channelBlocker.style.color = '#CCC';
-  channelBlocker.style.fontSize = '36px';
   channelBlocker.style.fontWeight = '600';
   channelBlocker.style.position = 'absolute';
   channelBlocker.style.top = 0;
@@ -348,4 +348,27 @@ function uiChannelBlocker(intervald) {
   });
 
   return channelBlocker;
+}
+
+function uiChannelBlockerTitle() {
+  const channelBlocker = document.createElement('h1');
+  channelBlocker.classList.add('btsChannelBlocker');
+  channelBlocker.style.display = 'flex';
+  channelBlocker.style.justifyContent = 'center';
+  channelBlocker.style.fontSize = '30px';
+  channelBlocker.style.padding = '60px 0 10px 0';
+  channelBlocker.style.height = '100%';
+}
+
+function uiBtsItem() {
+  const channelBlocker = document.createElement('div');
+  channelBlocker.classList.add('btsItemList');
+}
+
+function uiBtsItemList() {
+  const channelBlocker = document.createElement('div');
+  channelBlocker.classList.add('btsItemList');
+  channelBlocker.style.display = 'flex';
+
+
 }
