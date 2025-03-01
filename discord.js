@@ -158,7 +158,8 @@ function parseMessage(element) {
       username,
       title: getFromMessage_title(element),
       url: addBtsParam(getFromMessage_url(element)),
-      sku: getFromMessage_sku(element)
+      sku: getFromMessage_sku(element),
+      img: getFromMessage_img(element),
     }
     : { username }
 }
@@ -183,6 +184,10 @@ function getFromMessage_sku(element) {
   const embedFields = Array.from(element?.querySelectorAll?.(`.embedField__${classNameId}`));
 
   return getEmbedFieldValue(embedFields, 'SKU');
+}
+
+function getFromMessage_img(element) {
+  return element.querySelector('article img')?.src;
 }
 
 function getFromMessage_url(element) {
