@@ -23,6 +23,7 @@ const goToCheckoutDelay = 500;
 const testing_delay_between_action = 350;
 const somethingWrongWithAddToCart = false;
 const EXECUTE_BUY = true;
+const subTotalBuffer = 5;
 
 const SKU_151 = {
   "a-88897904": {
@@ -224,28 +225,25 @@ docReady(async function () {
     }
   }
 
+  if (get_pageType() === 'CART') {
+    return location.href = '/checkout';
+  }
+
   if (get_pageType() === "CHECKOUT") {
     // if prompted to login login
     makeSureToStayLoggedIn();
 
-    // Perform qty*productPrice calculation to make sure we have expected cart before placing order
-    const { qty, productPrice } = JSON.parse(
-      sessionStorage?.getItem("bts") ?? "{}"
-    );
-    const expectedSubtotal = qty * productPrice + 5; // With 5 dollar buffer
+    // prompted to confirm address
+    makeSureToConfirmShipping();
 
-    const actualSubTotalElement = await doUntil(get_checkoutSubTotal);
-    const actualSubTotal = convertMoneyToNumber(
-      actualSubTotalElement?.textContent
-    );
-
+    // Perform calculation to make sure we have expected cart price before placing order
+    const expectedSubtotal = get_expectedSubtotal();
+    const actualSubTotal = await get_actualSubTotal();
     if (expectedSubtotal < actualSubTotal) {
       const styleOverrides = { fontSize: '40px' }
       return createAlertBox(`Calculation to the cart was different than expected. We might have unwanted items in the cart. expected ${expectedSubtotal} but actual was ${actualSubTotal}`, styleOverrides);
     }
 
-    // prompted to confirm address
-    makeSureToConfirmShipping();
 
     // Execute!!!!!
     repeatCheckoutClick();
@@ -552,6 +550,24 @@ function get_creditCardInput() {
 
 function get_ccConfirmButton() {
   return document.querySelector('[data-test="verify-card-button"]');
+}
+
+function get_expectedSubtotal() {
+  const defaultBtsValue = `{"qty":1,"productPrice":-${subTotalBuffer}}`;
+
+  const { qty, productPrice } = JSON.parse(
+    sessionStorage?.getItem("bts") ?? defaultBtsValue
+  );
+
+  return qty * productPrice + subTotalBuffer; // With subTotalBuffer
+}
+
+async function get_actualSubTotal() {
+  const actualSubTotalElement = await doUntil(get_checkoutSubTotal);
+
+  return convertMoneyToNumber(
+    actualSubTotalElement?.textContent
+  );
 }
 
 async function repeatCheckoutClick(count = 1) {
