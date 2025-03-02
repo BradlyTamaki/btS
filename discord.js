@@ -76,7 +76,7 @@ function tickFn() {
     const secondsToNextRun = Math.ceil((+window.btsExecuteOffsetDateTime - +new Date()) / 1000);
     log(`holding off executing.`, {
       queueCount: getItemsInBtsQueue(),
-      nextRun:`${secondsToNextRun}secs`
+      nextRun: `${secondsToNextRun}secs`
     });
   }
 
@@ -160,6 +160,7 @@ function parseMessage(element) {
       url: addBtsParam(getFromMessage_url(element)),
       sku: getFromMessage_sku(element),
       img: getFromMessage_img(element),
+      ts: getFromMessage_ts(element),
     }
     : { username }
 }
@@ -188,6 +189,10 @@ function getFromMessage_sku(element) {
 
 function getFromMessage_img(element) {
   return element.querySelector('article img')?.src;
+}
+
+function getFromMessage_ts(element) {
+  return element.querySelector('time')?.ariaLabel;
 }
 
 function getFromMessage_url(element) {
@@ -279,6 +284,31 @@ function sleep(ms) {
 }
 
 // ================================
+// UI functions
+// ================================
+
+function generateBtsItemsList() {
+  const listElement = document.getElementById('btsItemList');
+
+  listElement.innerHTML = '';
+
+  const items = removeUselessItems(window.msgMap)
+  const last8Items = items.slice(items.length - 8);
+
+  last8Items.forEach((msgObj, _key) => {
+    if (msgObj?.url) {
+      listElement.appendChild(uiBtsItem(msgObj));
+    }
+  });
+}
+
+function removeUselessItems(msgMap) {
+  return Array.from(msgMap)
+    .filter(([_key, msg]) => msg?.url != null)
+    .map(([_key, msg]) => msg);
+}
+
+// ================================
 // UI
 // ================================
 function btsCreateBlocker(intervald) {
@@ -317,6 +347,7 @@ function uiEnableBts() {
     const intervald = setInterval(tickFn, tickRate);
 
     btsCreateBlocker(intervald);
+    generateBtsItemsList();
   });
 
   return enableBts;
@@ -324,13 +355,13 @@ function uiEnableBts() {
 
 function uiChannelBlocker(intervald) {
   const channelBlocker = document.createElement('div');
-  channelBlocker.classList.add('btsChannelBlocker');
   channelBlocker.style.display = 'flex';
   channelBlocker.style.justifyContent = 'center';
   channelBlocker.style.alignItems = 'center';
   channelBlocker.style.flexDirection = 'column';
   channelBlocker.style.color = '#CCC';
   channelBlocker.style.fontWeight = '600';
+  channelBlocker.style.fontSize = '12px';
   channelBlocker.style.position = 'absolute';
   channelBlocker.style.top = 0;
   channelBlocker.style.right = 0;
@@ -338,10 +369,13 @@ function uiChannelBlocker(intervald) {
   channelBlocker.style.left = 0;
   channelBlocker.style.zIndex = 9;
   channelBlocker.style.backdropFilter = 'blur(1.5px)';
+  channelBlocker.classList.add('btsChannelBlocker');
+  
+  channelBlocker.appendChild(uiChannelBlockerTitle());
+  channelBlocker.appendChild(uiBtsItemList());
 
-  channelBlocker.textContent = 'btS running';
   channelBlocker.addEventListener('click', () => {
-    if(confirm('Do you want bts to stop?')){
+    if (confirm('Do you want bts to stop?')) {
       btsRemoveBlocker();
       clearInterval(intervald);
     }
@@ -351,24 +385,75 @@ function uiChannelBlocker(intervald) {
 }
 
 function uiChannelBlockerTitle() {
-  const channelBlocker = document.createElement('h1');
-  channelBlocker.classList.add('btsChannelBlocker');
-  channelBlocker.style.display = 'flex';
-  channelBlocker.style.justifyContent = 'center';
-  channelBlocker.style.fontSize = '30px';
-  channelBlocker.style.padding = '60px 0 10px 0';
-  channelBlocker.style.height = '100%';
+  const channelBlockerTitle = document.createElement('h1');
+  channelBlockerTitle.style.display = 'flex';
+  channelBlockerTitle.style.justifyContent = 'center';
+  channelBlockerTitle.style.fontSize = '30px';
+  channelBlockerTitle.style.padding = '60px 0 20px 0';
+  channelBlockerTitle.classList.add('btsChannelBlocker');
+  channelBlockerTitle.textContent = 'btS running';
+
+  return channelBlockerTitle
 }
 
-function uiBtsItem() {
-  const channelBlocker = document.createElement('div');
-  channelBlocker.classList.add('btsItemList');
+function uiBtsItem(msgObj) {
+  const item = document.createElement('a');
+  item.style.display = 'flex';
+  item.style.alignItems = 'center';
+  item.style.width = '100%';
+  item.style.gap = '7px';
+  item.classList.add('btsItem');
+  item.href = msgObj?.url;
+  item.target = '_blank'
+
+  // img
+  const itemImg = document.createElement('img');
+  itemImg.style.height = '45px';
+  itemImg.src = msgObj?.img;
+
+  // title
+  const itemTitle = uiBtsItemRight(msgObj);
+
+  item.appendChild(itemImg);
+  item.appendChild(itemTitle);
+
+  item.addEventListener('click', (e) => e?.stopPropagation())
+
+  return item;
+}
+
+function uiBtsItemRight(msgObj) {
+  const itemListRight = document.createElement('div');
+  itemListRight.style.display = 'flex';
+  itemListRight.style.flexDirection = 'column';
+
+  // top
+  const top = document.createElement('span');
+  top.textContent = msgObj?.ts;
+
+  // bottom
+  const bottom = document.createElement('h4');
+  bottom.style.flexGrow = '1';
+  bottom.style.color = '#FFF';
+  bottom.textContent = msgObj?.title;
+
+  itemListRight.appendChild(top);
+  itemListRight.appendChild(bottom);
+
+  return itemListRight;
 }
 
 function uiBtsItemList() {
-  const channelBlocker = document.createElement('div');
-  channelBlocker.classList.add('btsItemList');
-  channelBlocker.style.display = 'flex';
+  const itemList = document.createElement('div');
+  itemList.style.display = 'flex';
+  itemList.style.alignItems = 'center';
+  itemList.style.justifyContent = 'center';
+  itemList.style.flexDirection = 'column';
+  itemList.style.gap = '7px';
+  itemList.style.paddingLeft = '7px';
+  itemList.style.height = '100%';
 
+  itemList.id = 'btsItemList';
 
+  return itemList
 }
