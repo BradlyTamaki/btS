@@ -64,7 +64,7 @@ function tickFn() {
   });
 
   // Re-generate bts item ui
-  generateBtsItemsList();
+  if(newMessages.size > 0) generateBtsItemsList();
 
   // Execute next item in btsQueue
   const isWithinExecuteOffset = new Date() >= window.btsExecuteOffsetDateTime;
