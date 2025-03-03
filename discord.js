@@ -53,8 +53,8 @@ async function init() {
 function tickFn() {
   log(`tickFn() @ ${tickRate}ms [${window.msgMap.size}/${garbageCollectionTrigger}]`);
 
+  // Find new message and add to msgMap
   const newMessages = findNewMessages();
-
   newMessages.forEach((message, key) => {
     log(`New msg found @ ${(new Date()).toLocaleString()}`, message);
 
@@ -63,6 +63,10 @@ function tickFn() {
     window.msgMap.set(key, message);
   });
 
+  // Re-generate bts item ui
+  generateBtsItemsList();
+
+  // Execute next item in btsQueue
   const isWithinExecuteOffset = new Date() >= window.btsExecuteOffsetDateTime;
   if (isWithinExecuteOffset) {
     const next = getBtsNextQueue();
@@ -80,6 +84,7 @@ function tickFn() {
     });
   }
 
+  // Cleanup after tickFn is complete
   maybeGarbageCollection();
 }
 
@@ -370,7 +375,7 @@ function uiChannelBlocker(intervald) {
   channelBlocker.style.zIndex = 9;
   channelBlocker.style.backdropFilter = 'blur(1.5px)';
   channelBlocker.classList.add('btsChannelBlocker');
-  
+
   channelBlocker.appendChild(uiChannelBlockerTitle());
   channelBlocker.appendChild(uiBtsItemList());
 
