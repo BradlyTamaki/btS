@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Discord btS
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      git
 // @description  try to take over the world!
 // @author       You
 // @match        https://discord.com/channels/1296182793407168614/*
