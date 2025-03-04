@@ -21,7 +21,7 @@ const max = 4;
 
 const goToCheckoutDelay = 500;
 const testing_delay_between_action = 350;
-const somethingWrongWithAddToCart = false;
+const somethingWrongWithAddToCart = true;
 const EXECUTE_BUY = true;
 const subTotalBuffer = 5;
 
