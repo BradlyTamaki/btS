@@ -21,7 +21,8 @@ const max = 4;
 
 const goToCheckoutDelay = 500;
 const testing_delay_between_action = 350;
-const somethingWrongWithAddToCart = true;
+const cautionMode = true;
+const somethingWrongWithAddToCart = cautionMode || true;
 const EXECUTE_BUY = true;
 const subTotalBuffer = 5;
 
@@ -233,6 +234,8 @@ docReady(async function () {
   }
 
   if (get_pageType() === "CHECKOUT") {
+    if (cautionMode) return;
+
     // if prompted to login login
     makeSureToStayLoggedIn();
 
