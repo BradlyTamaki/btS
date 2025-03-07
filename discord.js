@@ -157,8 +157,8 @@ function findNewMessages() {
 function parseMessage(element) {
   const username = getFromMessage_username(element) ?? window.btsPrevUsername;
   window.btsPrevUsername = username;
-
-  return getIsPokeNotifyBot(username)
+  
+  return getIsPokeNotifyBot(username) && getFromMessage_url(element)
     ? {
       username,
       title: getFromMessage_title(element),

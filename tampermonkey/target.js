@@ -12,6 +12,6 @@
 
 (function() {
     'use strict';
-    console.log('bts: target')
+    
     // See @require for source code
 })();
