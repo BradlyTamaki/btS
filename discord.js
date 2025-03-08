@@ -344,6 +344,7 @@ function uiEnableBts() {
   enableBts.style.border = '2px solid #222';
   enableBts.style.borderRadius = '8px'
   enableBts.style.zIndex = 8;
+  enableBts.style.cursor = 'pointer';
 
   enableBts.textContent = 'enable btS';
   enableBts.addEventListener('click', () => {
