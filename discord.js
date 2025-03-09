@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 const P0 = 'P0', P1 = 'P1', P2 = 'P2', P3 = 'P3';
-const tickRate = 3000;
+const tickRate = 1000;
 const garbageCollectionTrigger = 100
 const executeOffsetValue = 15 * 1000
 window.btsExecuteOffsetDateTime = new Date();
