@@ -64,7 +64,7 @@ function tickFn() {
   });
 
   // Re-generate bts item ui
-  if(newMessages.size > 0) generateBtsItemsList();
+  if (newMessages.size > 0) generateBtsItemsList();
 
   // Execute next item in btsQueue
   const isWithinExecuteOffset = new Date() >= window.btsExecuteOffsetDateTime;
@@ -75,6 +75,12 @@ function tickFn() {
 
       window.open(next.url);
       window.btsExecuteOffsetDateTime = new Date(+new Date() + executeOffsetValue);
+
+      if (isPokemonChannel(getDiscordChannelTitle())) {
+        btsRemoveBlocker();
+        clearInterval(window.btsIntervald);
+        createAlertBox('btS stopped itself since it found a pokemon ping')
+      }
     }
   } else if (getItemsInBtsQueue() > 0) {
     const secondsToNextRun = Math.ceil((+window.btsExecuteOffsetDateTime - +new Date()) / 1000);
@@ -129,6 +135,19 @@ function addBtsParam(url) {
   return newUrl.href;
 }
 
+function getDiscordChannelTitle() {
+  return (document.querySelector('[aria-label="Channel header"] h1')?.textContent ?? '').replace('PokeNotify: ', '')
+}
+
+function isPokemonChannel(channelTitle = '') {
+  if (channelTitle.toLowerCase() === 'pokemon-center') return true;
+  if (channelTitle.toLowerCase() === 'pokemon-center-v2') return true;
+  if (channelTitle.toLowerCase() === 'pokemon-center-v3-testing') return true;
+  if (channelTitle.toLowerCase().substring(0, 14) === 'pokemon-center') return true;
+
+  return false;
+}
+
 // ================================
 // Msg Util
 // ================================
@@ -157,7 +176,7 @@ function findNewMessages() {
 function parseMessage(element) {
   const username = getFromMessage_username(element) ?? window.btsPrevUsername;
   window.btsPrevUsername = username;
-  
+
   return getIsPokeNotifyBot(username) && getFromMessage_url(element)
     ? {
       username,
@@ -350,9 +369,9 @@ function uiEnableBts() {
   enableBts.addEventListener('click', () => {
     window.msgMap = initExistingMessages('');
 
-    const intervald = setInterval(tickFn, tickRate);
+    window.btsIntervald = setInterval(tickFn, tickRate);
 
-    btsCreateBlocker(intervald);
+    btsCreateBlocker(window.btsIntervald);
     generateBtsItemsList();
   });
 
@@ -462,4 +481,29 @@ function uiBtsItemList() {
   itemList.id = 'btsItemList';
 
   return itemList
+}
+
+function createAlertBox(str = "btS Could not execute", styleOverrides = {}) {
+  const alertBox = document.createElement("div");
+  alertBox.style.display = "flex";
+  alertBox.style.justifyContent = "center";
+  alertBox.style.alignItems = "center";
+  alertBox.style.fontSize = "80px";
+  alertBox.style.fontWeight = "bold";
+  alertBox.style.height = "300px";
+  alertBox.style.position = "absolute";
+  alertBox.style.top = "65px";
+  alertBox.style.left = "100px";
+  alertBox.style.right = "100px";
+  alertBox.style.padding = "10px";
+  alertBox.style.background = "red";
+  alertBox.style.zIndex = "9999";
+  alertBox.addEventListener("click", (e) => {
+    e.target.remove();
+  });
+  alertBox.textContent = str;
+
+  Object.keys(styleOverrides).forEach((key) => alertBox.style[key] = styleOverrides[key]);
+
+  document.querySelector("body").appendChild(alertBox);
 }
