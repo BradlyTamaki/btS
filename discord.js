@@ -80,6 +80,10 @@ function tickFn() {
         btsRemoveBlocker();
         clearInterval(window.btsIntervald);
         createAlertBox('btS stopped itself since it found a pokemon ping')
+        setTimeout(() => window.open(next.url), 1000 * 3);
+        setTimeout(() => window.open(next.url), 1000 * 6);
+        setTimeout(() => window.open(next.url), 1000 * 10);
+        setTimeout(() => window.open(next.url), 3000 * 15);
       }
     }
   } else if (getItemsInBtsQueue() > 0) {
