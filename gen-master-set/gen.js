@@ -7,18 +7,20 @@
 // 3. grab cardName which will be the element that holds the card name
 
 
+const cardSet = 'mui-style-1tcnurq';
 const card = 'mui-style-dk0tj5'
 const cardName = 'mui-style-1oo6r3y';
 const cardNumber = 'mui-style-1w1vbxm';
 
-const cards = Array.from(document.querySelectorAll(`.${card}`));
+const cards = Array.from(document.querySelectorAll(`.${cardSet} .${card}`));
 
-const masterSet = cards.map((card) => {
+const masterSet = cards.map((card, i) => {
+    const slot = i + 1;
     const number = card?.querySelector?.(`.${cardNumber}`)?.textContent;
     const name = card?.querySelector?.(`.${cardName}`)?.textContent;
     const isValid = number != null && name != null;
     
-    return isValid ? { name, number } : null;
+    return isValid ? { slot, number, name } : null;
 });
 
 console.log(masterSet);
