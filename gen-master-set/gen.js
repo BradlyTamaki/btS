@@ -5,7 +5,9 @@
 //      Array should match the card count
 // 2. grab cardNumber which will be the element that holds the card number
 // 3. grab cardName which will be the element that holds the card name
-
+// 4. Copy results to clipboard
+// 5. Sent to csv converter like (https://www.convertcsv.com/json-to-csv.htm)
+// 6. import to sheets
 
 const cardSet = 'mui-style-1tcnurq';
 const card = 'mui-style-dk0tj5'
